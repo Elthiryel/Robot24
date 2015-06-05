@@ -1,0 +1,32 @@
+<Configuration>
+	<Strategy name="strategy1">
+		<Requirements>
+			<NumberOfPlayers>
+				<Min>2</Min>
+				<Max>4</Max>
+			</NumberOfPlayers>
+			<EnemyEnergy>
+				<Min>2</Min>
+				<Max>4</Max>
+			</EnemyEnergy>
+			<Energy>
+				<Min>2</Min>
+				<Max>4</Max>
+			</Energy>
+			<EnemyVelocity>
+				<Min>2</Min>
+				<Max>4</Max>
+			</EnemyVelocity>
+			<EnemyDirectionRelativeToGun>
+				<Min>2</Min>
+				<Max>4</Max>
+			</EnemyDirectionRelativeToGun>
+			<EnemyDirectionRelativeToRobot>
+				<Min>2</Min>
+				<Max>4</Max>
+			</EnemyDirectionRelativeToRobot>
+		</Requirements>
+		<MoveType>Circle</MoveType>
+		<FireType>HeavyFire</FireType>
+	</Strategy>
+</Confiiguration>
