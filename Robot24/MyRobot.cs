@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Robocode;
 
-namespace PMRoboCode
+namespace Robot24
 {
     public class MyRobot : Robot
     {
