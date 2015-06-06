@@ -7,28 +7,28 @@
           <Max>4</Max>
         </NumberOfPlayers>
         <EnemyEnergy>
-          <Min>2</Min>
-          <Max>4</Max>
+          <Min>1</Min>
+          <Max>300</Max>
         </EnemyEnergy>
         <Energy>
-          <Min>2</Min>
-          <Max>4</Max>
+          <Min>1</Min>
+          <Max>300</Max>
         </Energy>
         <EnemyVelocity>
-          <Min>2</Min>
-          <Max>4</Max>
+          <Min>0</Min>
+          <Max>100</Max>
         </EnemyVelocity>
         <EnemyDirectionRelativeToGun>
-          <Min>2</Min>
-          <Max>4</Max>
+          <Min>0</Min>
+          <Max>360</Max>
         </EnemyDirectionRelativeToGun>
         <EnemyDirectionRelativeToRobot>
-          <Min>2</Min>
-          <Max>4</Max>
+          <Min>0</Min>
+          <Max>360</Max>
         </EnemyDirectionRelativeToRobot>
       </Requirements>
-      <MoveType>Circle</MoveType>
-      <FireType>HeavyFire</FireType>
+      <MoveType>Straight</MoveType>
+      <FireType>SmartFire</FireType>
     </Strategy>
   </Strategies>
 </Configuration>

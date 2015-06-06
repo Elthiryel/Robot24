@@ -14,17 +14,19 @@ namespace Robot24
         public Configuration CentralConfiguration;
         public Strategy CurrentStrategy;
         public ScannedRobotEvent LastRobotInfo;
+        public double Movin = 50;
 
         public override void Run()
         {
             InitializeConfiguration();
             _lastRight = true;
+            Movin = Math.Max(BattleFieldWidth, BattleFieldHeight);
+            //TurnGunRight(90);
+            TurnRight(90);
             while (true)
             {
-                if (_lastRight)
-                    TurnRight(10);
-                else
-                    TurnLeft(10);
+                Ahead(Movin);
+                TurnRight(90);
                 DetermineStrategy();
             }
         }
