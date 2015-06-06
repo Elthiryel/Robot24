@@ -11,6 +11,7 @@ namespace Robot24
     public class PiotrekRobot : Robot
     {
         private bool _lastRight;
+        private int moveDirection = 1;
         public Configuration CentralConfiguration;
         public Strategy CurrentStrategy;
         public ScannedRobotEvent LastRobotInfo;
@@ -25,6 +26,15 @@ namespace Robot24
             TurnRight(90);
             while (true)
             {
+                if (CurrentStrategy != null && CurrentStrategy.MoveType == MoveType.Circle)
+                {
+                    while (true)
+                    {
+                        Ahead(30*moveDirection);
+                        TurnRight(20);
+                    }
+                }
+                
                 Ahead(Movin);
                 //this.Heading
                 TurnRight(90);
@@ -79,6 +89,7 @@ namespace Robot24
 
         public override void OnHitWall(HitWallEvent evnt)
         {
+            moveDirection *=-1;
             this.TurnRight(evnt.Bearing);
             if (Math.Abs(this.GunHeading - this.Heading) < 10)
                 this.TurnGunRight(90);
@@ -125,6 +136,17 @@ namespace Robot24
                 case MoveType.Straight:
                     TurnRight(LastRobotInfo.Bearing);
                     Ahead(LastRobotInfo.Distance/2);
+                    break;
+                case MoveType.Evade:
+                    TurnRight(LastRobotInfo.Bearing + 90);
+                    Ahead(LastRobotInfo.Distance);
+                    break;
+                case MoveType.Circle:
+                    if (LastRobotInfo.Velocity == 0)
+                        moveDirection *= -1;
+                    TurnRight(LastRobotInfo.Bearing + 90);
+                    TurnGunLeft(90);
+	                Ahead(10 * moveDirection);
                     break;
                 default:
                     return;

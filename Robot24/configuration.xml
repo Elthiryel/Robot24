@@ -3,7 +3,7 @@
     <Strategy name="strategy1">
       <Requirements>
         <NumberOfPlayers>
-          <Min>2</Min>
+          <Min>1</Min>
           <Max>4</Max>
         </NumberOfPlayers>
         <EnemyEnergy>
@@ -19,15 +19,15 @@
           <Max>100</Max>
         </EnemyVelocity>
         <EnemyDirectionRelativeToGun>
-          <Min>0</Min>
-          <Max>360</Max>
+          <Min>-180</Min>
+          <Max>180</Max>
         </EnemyDirectionRelativeToGun>
         <EnemyDirectionRelativeToRobot>
-          <Min>0</Min>
-          <Max>360</Max>
+          <Min>-180</Min>
+          <Max>180</Max>
         </EnemyDirectionRelativeToRobot>
       </Requirements>
-      <MoveType>Straight</MoveType>
+      <MoveType>Circle</MoveType>
       <FireType>SmartFire</FireType>
     </Strategy>
   </Strategies>
