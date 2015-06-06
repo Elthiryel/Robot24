@@ -23,6 +23,8 @@ namespace Robot24.Config
 
         public bool PassedRequirements(ScannedRobotEvent lastRobotInfo, Robot ourRobot)
         {
+            if (lastRobotInfo == null)
+                return false;
             var enemyDirectionRelativeToRobot = lastRobotInfo.Heading - ourRobot.Heading;
             if (enemyDirectionRelativeToRobot > 180)
                 enemyDirectionRelativeToRobot -= 360;

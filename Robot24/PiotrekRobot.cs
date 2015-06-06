@@ -26,6 +26,7 @@ namespace Robot24
             while (true)
             {
                 Ahead(Movin);
+                //this.Heading
                 TurnRight(90);
                 DetermineStrategy();
             }
@@ -63,6 +64,7 @@ namespace Robot24
         public override void OnScannedRobot(ScannedRobotEvent e)
         {
             LastRobotInfo = e;
+            DetermineStrategy();
             var bearing = e.Bearing;
             _lastRight = bearing >= 0;
             var distance = e.Distance;
@@ -74,6 +76,30 @@ namespace Robot24
             Scan();
             DoEndingMove();
         }
+
+        public override void OnHitWall(HitWallEvent evnt)
+        {
+            this.TurnRight(evnt.Bearing);
+            if (Math.Abs(this.GunHeading - this.Heading) < 10)
+                this.TurnGunRight(90);
+        }
+
+        public override void OnHitRobot(HitRobotEvent e)
+        {
+            this.TurnRight(e.Bearing);
+            if (CurrentStrategy == null)
+                return;
+            switch (CurrentStrategy.MoveType)
+            {
+                case MoveType.Straight:
+                    Fire(5);
+                    break;
+                default:
+                    Fire(1);
+                    break;
+            }
+        }
+
 
         private void DoEndingMove()
         {
