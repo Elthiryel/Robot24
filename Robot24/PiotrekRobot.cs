@@ -1,14 +1,21 @@
 ﻿using System;
+using System.IO;
+using System.Security.Permissions;
+using System.Xml.Serialization;
 using Robocode;
+using Robot24.Config;
 
 namespace Robot24
 {
+    //[FileIOPermission(SecurityAction.Assert, Unrestricted = true)]
     public class PiotrekRobot : Robot
     {
         private bool _lastRight;
+        public Configuration CentralConfiguration;
 
         public override void Run()
         {
+            InitializeConfiguration();
             _lastRight = true;
             while (true)
             {
@@ -16,6 +23,25 @@ namespace Robot24
                     TurnRight(10);
                 else
                     TurnLeft(10);
+            }
+        }
+
+        public void InitializeConfiguration()
+        {
+            GetResourceTextFile("configuration.xml");
+        }
+
+        public void GetResourceTextFile(string filename)
+        {
+            var serializer = new XmlSerializer(typeof(Configuration));
+
+            using (Stream stream = this.GetType().Assembly.
+                       GetManifestResourceStream("Robot24." + filename))
+            {
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    CentralConfiguration = (Configuration)serializer.Deserialize(sr);
+                }
             }
         }
 
