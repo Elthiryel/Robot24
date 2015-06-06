@@ -53,18 +53,25 @@ namespace Robot24
             var velocity = e.Velocity;
             Console.WriteLine("SCANNED, bearing = {0}, distance = {1}, velocity = {2}", bearing, distance, velocity);
             Stop();
-            var toMove = distance > 50 ? distance / 10 : 5;
-            if ((distance < 100 && IsHeadingOk(Heading, e.Heading, 20)) || (distance < 200 && velocity < 1))
-                Fire(5);
-            else if ((distance < 200 && IsHeadingOk(Heading, e.Heading, 20)) || (distance < 200 && velocity < 3))
-                Fire(2);
-            else if (distance < 300 || velocity < 1)
-                Fire(1);
-            else
-                Ahead(toMove);
-            TurnRight(bearing);
+            DoFire();
+            DoOpeningMove();
             Scan();
-            Ahead(toMove);
+            DoEndingMove();
+        }
+
+        private void DoEndingMove()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DoOpeningMove()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DoFire()
+        {
+            throw new NotImplementedException();
         }
 
         private static bool IsHeadingOk(double my, double his, double limit)
