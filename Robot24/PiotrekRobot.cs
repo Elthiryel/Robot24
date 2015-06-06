@@ -215,5 +215,15 @@ namespace Robot24
                 return true;
             return false;
         }
+
+        private void SynchronizeGunWithHeading()
+        {
+            var diff = Heading - GunHeading;
+            if (diff > 180)
+                diff -= 360;
+            if (diff < -180)
+                diff += 360;
+            TurnGunRight(diff);
+        }
     }
 }
