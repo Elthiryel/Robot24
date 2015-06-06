@@ -86,20 +86,63 @@ namespace Robot24
 
         private void DoFire()
         {
-            throw new NotImplementedException();
+            if (CurrentStrategy == null)
+                return;
+            switch (CurrentStrategy.FireType)
+            {
+                case FireType.HeavyFire:
+                    HeavyFire();
+                    break;
+                case FireType.LightFire:
+                    LightFire();
+                    break;
+                case FireType.NoFire:
+                    break;
+                case FireType.SmartFire:
+                    SmartFire();
+                    break;
+            }
+        }
+
+        private void HeavyFire()
+        {
+            Fire(3);
+        }
+
+        private void LightFire()
+        {
+            Fire(1);
+        }
+
+        private void SmartFire()
+        {
+            var distance = LastRobotInfo.Distance;
+            var velocity = LastRobotInfo.Velocity;
+            var isHeadingOk = IsHeadingOk(Heading, LastRobotInfo.Heading, 15);
+            if (distance < 100 && velocity < 2 && isHeadingOk)
+                Fire(5);
+            else if (distance < 100 && velocity < 2)
+                Fire(3);
+            else if (distance < 200 && isHeadingOk)
+                Fire(3);
+            else if (distance < 200 && velocity < 2)
+                Fire(2);
+            else if (distance < 300 && isHeadingOk)
+                Fire(2);
+            else if (distance < 400 || velocity < 1)
+                Fire(1);
+            else if (distance < 500 && isHeadingOk)
+                Fire(1);
         }
 
         private static bool IsHeadingOk(double my, double his, double limit)
         {
-            if (Math.Abs(my - his) < limit)
+            var diff = Math.Abs(my - his);
+            if (diff <= limit)
                 return true;
-            if (Math.Abs(my + 180 - his) < limit)
+            if (diff >= (180 - limit) && diff <= (180 + limit))
                 return true;
-            if (Math.Abs(my + 360 - his) < limit)
-                return true;
-            if (Math.Abs(my - 180 - his) < limit)
-                return true;
-            if (Math.Abs(my - 360 - his) < limit)
+            if (diff >= (360 - limit))
                 return true;
             return false;
         }
