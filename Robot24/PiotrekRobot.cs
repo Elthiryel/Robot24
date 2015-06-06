@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Security.Permissions;
 using System.Xml.Serialization;
 using Robocode;
 using Robot24.Config;
@@ -10,8 +9,8 @@ namespace Robot24
     //[FileIOPermission(SecurityAction.Assert, Unrestricted = true)]
     public class PiotrekRobot : Robot
     {
-        private bool _lastRight;
-        private int moveDirection = 1;
+        private int _moveDirection = 1;
+
         public Configuration CentralConfiguration;
         public Strategy CurrentStrategy;
         public ScannedRobotEvent LastRobotInfo;
@@ -20,7 +19,6 @@ namespace Robot24
         public override void Run()
         {
             InitializeConfiguration();
-            _lastRight = true;
             Movin = Math.Max(BattleFieldWidth, BattleFieldHeight);
             //TurnGunRight(90);
             TurnRight(90);
@@ -30,7 +28,7 @@ namespace Robot24
                 {
                     while (true)
                     {
-                        Ahead(30*moveDirection);
+                        Ahead(30*_moveDirection);
                         TurnRight(20);
                     }
                 }
@@ -75,11 +73,6 @@ namespace Robot24
         {
             LastRobotInfo = e;
             DetermineStrategy();
-            var bearing = e.Bearing;
-            _lastRight = bearing >= 0;
-            var distance = e.Distance;
-            var velocity = e.Velocity;
-            Console.WriteLine("SCANNED, bearing = {0}, distance = {1}, velocity = {2}", bearing, distance, velocity);
             Stop();
             DoFire();
             DoOpeningMove();
@@ -89,20 +82,20 @@ namespace Robot24
 
         public override void OnHitWall(HitWallEvent evnt)
         {
-            moveDirection *=-1;
-            this.TurnRight(evnt.Bearing);
-            if (Math.Abs(this.GunHeading - this.Heading) < 10)
-                this.TurnGunRight(90);
+            _moveDirection *=-1;
+            TurnRight(evnt.Bearing);
+            if (Math.Abs(GunHeading - Heading) < 10)
+                TurnGunRight(90);
         }
 
         public override void OnHitRobot(HitRobotEvent e)
         {
-            this.TurnRight(e.Bearing);
             if (CurrentStrategy == null)
                 return;
             switch (CurrentStrategy.MoveType)
             {
                 case MoveType.Straight:
+                    TurnRight(e.Bearing);
                     Fire(5);
                     break;
                 default:
@@ -119,11 +112,9 @@ namespace Robot24
             switch (CurrentStrategy.MoveType)
             {
                 case MoveType.Straight:
-                    TurnRight(LastRobotInfo.Bearing);
-                    Ahead(LastRobotInfo.Distance / 2);
                     break;
                 default:
-                    return;
+                    break;
             }
         }
 
@@ -135,6 +126,7 @@ namespace Robot24
             {
                 case MoveType.Straight:
                     TurnRight(LastRobotInfo.Bearing);
+                    SynchronizeGunWithHeading();
                     Ahead(LastRobotInfo.Distance/2);
                     break;
                 case MoveType.Evade:
@@ -143,10 +135,10 @@ namespace Robot24
                     break;
                 case MoveType.Circle:
                     if (LastRobotInfo.Velocity == 0)
-                        moveDirection *= -1;
+                        _moveDirection *= -1;
                     TurnRight(LastRobotInfo.Bearing + 90);
                     TurnGunLeft(90);
-	                Ahead(10 * moveDirection);
+	                Ahead(10 * _moveDirection);
                     break;
                 default:
                     return;
@@ -155,8 +147,10 @@ namespace Robot24
 
         private void DoFire()
         {
+            Out.WriteLine("DO FIRE (A)");
             if (CurrentStrategy == null)
                 return;
+            Out.WriteLine("DO FIRE (B)");
             switch (CurrentStrategy.FireType)
             {
                 case FireType.HeavyFire:
