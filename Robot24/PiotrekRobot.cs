@@ -33,6 +33,7 @@ namespace Robot24
 
         private void DetermineStrategy()
         {
+            CurrentStrategy = null;
             foreach (var strategy in CentralConfiguration.Strategies)
             {
                 if (strategy.PassedRequirements(LastRobotInfo, this))
