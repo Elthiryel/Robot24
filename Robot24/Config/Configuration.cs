@@ -26,10 +26,14 @@ namespace Robot24.Config
 
         public bool PassedRequirements(ScannedRobotEvent lastRobotInfo, Robot ourRobot)
         {
-            if (!(lastRobotInfo.Energy > Requirements.EnemyEnergy.Min && lastRobotInfo.Energy < Requirements.EnemyEnergy.Max))
+            if (Requirements.EnemyEnergy != null && !(lastRobotInfo.Energy >= Requirements.EnemyEnergy.Min && lastRobotInfo.Energy <= Requirements.EnemyEnergy.Max))
                 return false;
-            if (!(ourRobot.Energy > Requirements.EnemyEnergy.Min && ourRobot.Energy < Requirements.EnemyEnergy.Max))
-                return false; 
+            if (Requirements.Energy != null && !(ourRobot.Energy >= Requirements.Energy.Min && ourRobot.Energy <= Requirements.Energy.Max))
+                return false;
+            if (Requirements.EnemyVelocity != null && !(lastRobotInfo.Velocity >= Requirements.EnemyVelocity.Min && lastRobotInfo.Velocity <= Requirements.EnemyVelocity.Max))
+                return false;
+            if (Requirements.NumberOfPlayers != null && !(ourRobot.Others >= Requirements.NumberOfPlayers.Min && ourRobot.Others <= Requirements.NumberOfPlayers.Max))
+                return false;
             ///todo:
             /// 
             /// 
