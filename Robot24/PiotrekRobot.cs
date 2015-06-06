@@ -77,12 +77,32 @@ namespace Robot24
 
         private void DoEndingMove()
         {
-            throw new NotImplementedException();
+            if (CurrentStrategy == null)
+                return;
+            switch (CurrentStrategy.MoveType)
+            {
+                case MoveType.Straight:
+                    TurnRight(LastRobotInfo.Bearing);
+                    Ahead(LastRobotInfo.Distance / 2);
+                    break;
+                default:
+                    return;
+            }
         }
 
         private void DoOpeningMove()
         {
-            throw new NotImplementedException();
+            if (CurrentStrategy == null)
+                return;
+            switch (CurrentStrategy.MoveType)
+            {
+                case MoveType.Straight:
+                    TurnRight(LastRobotInfo.Bearing);
+                    Ahead(LastRobotInfo.Distance/2);
+                    break;
+                default:
+                    return;
+            }
         }
 
         private void DoFire()
