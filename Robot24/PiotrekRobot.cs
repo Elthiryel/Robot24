@@ -12,6 +12,8 @@ namespace Robot24
     {
         private bool _lastRight;
         public Configuration CentralConfiguration;
+        public Strategy CurrentStrategy;
+        public ScannedRobotEvent LastRobotInfo;
 
         public override void Run()
         {
@@ -23,6 +25,16 @@ namespace Robot24
                     TurnRight(10);
                 else
                     TurnLeft(10);
+                DetermineStrategy();
+            }
+        }
+
+        private void DetermineStrategy()
+        {
+            foreach (var strategy in CentralConfiguration.Strategies)
+            {
+                if (strategy.PassedRequirements(LastRobotInfo, this))
+                    CurrentStrategy = strategy;
             }
         }
 
@@ -47,6 +59,7 @@ namespace Robot24
 
         public override void OnScannedRobot(ScannedRobotEvent e)
         {
+            LastRobotInfo = e;
             var bearing = e.Bearing;
             _lastRight = bearing >= 0;
             var distance = e.Distance;

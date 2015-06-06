@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Robocode;
 
 namespace Robot24.Config
 {
@@ -22,6 +23,18 @@ namespace Robot24.Config
         public Requirements Requirements { get; set; }
         public MoveType MoveType { get; set; }
         public FireType FireType { get; set; }
+
+        public bool PassedRequirements(ScannedRobotEvent lastRobotInfo, Robot ourRobot)
+        {
+            if (!(lastRobotInfo.Energy > Requirements.EnemyEnergy.Min && lastRobotInfo.Energy < Requirements.EnemyEnergy.Max))
+                return false;
+            if (!(ourRobot.Energy > Requirements.EnemyEnergy.Min && ourRobot.Energy < Requirements.EnemyEnergy.Max))
+                return false; 
+            ///todo:
+            /// 
+            /// 
+            return true;
+        }
     }
 
     [Serializable]
