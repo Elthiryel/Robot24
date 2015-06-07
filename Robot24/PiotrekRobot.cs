@@ -95,7 +95,7 @@ namespace Robot24
             switch (CurrentStrategy.MoveType)
             {
                 case MoveType.Straight:
-                    TurnRight(e.Bearing);
+                    TurnRight(GetTurnAngle());
                     Fire(5);
                     break;
                 default:
@@ -126,7 +126,7 @@ namespace Robot24
         {
             TurnRight(GetTurnAngle());
             SynchronizeGunWithHeading();
-            Ahead(LastRobotInfo.Distance / (Math.Min((LastRobotInfo.Velocity+0.01)*10,1)));
+            Ahead(LastRobotInfo.Distance / 10);
         }
 
         private void DoEvadeOpeningMove()
@@ -164,14 +164,51 @@ namespace Robot24
         }
 
         private void DoStraightEndingMove()
-        {     
-            for (int i = 0; i < 10; i++)
+        {
+            var relativeHeading = GetRelativeHeading(Heading, LastRobotInfo.Heading);
+            var velocity = LastRobotInfo.Velocity;
+
+            var isMovingRight = relativeHeading > 0;
+            if (velocity < 0)
+                isMovingRight = !isMovingRight;
+
+            if (Math.Abs(relativeHeading) < 25 || Math.Abs(velocity) < 3)
             {
-                TurnRight(5*i);
-                TurnLeft(10*i);
-                TurnRight(5*i);
+                PerformScanning(isMovingRight);
+                return;
             }
-                
+
+            for (var j = 10; j <= 20; j += 5)
+            {
+                for (var i = 0; i < 4; ++i)
+                {
+                    if (isMovingRight)
+                        TurnRight(j);
+                    else
+                        TurnLeft(j);
+                    Scan();
+                }
+            }
+        }
+
+        private void PerformScanning(bool isMovingRight)
+        {
+            for (var i = 0; i < 5; ++i)
+            {
+                if (isMovingRight)
+                    TurnRight(10);
+                else
+                    TurnLeft(10);
+                Scan();
+            }
+            for (var i = 0; i < 5; ++i)
+            {
+                if (isMovingRight)
+                    TurnLeft(20);
+                else
+                    TurnRight(20);
+                Scan();
+            }
         }
 
         private void DoEvadeEndingMove()
@@ -260,7 +297,21 @@ namespace Robot24
         private double GetTurnAngle()
         {
             var angle = Heading - GunHeading + LastRobotInfo.Bearing;
-            return angle; // TODO
+            if (angle > 180)
+                angle -= 360;
+            if (angle < -180)
+                angle += 360;
+            return angle;
+        }
+
+        private double GetRelativeHeading(double my, double his)
+        {
+            var diff = his - my;
+            if (diff > 180)
+                diff -= 360;
+            if (diff < -180)
+                diff += 360;
+            return diff;
         }
     }
 }
