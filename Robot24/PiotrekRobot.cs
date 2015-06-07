@@ -87,6 +87,8 @@ namespace Robot24
         public override void OnScannedRobot(ScannedRobotEvent e)
         {
             LastRobotInfo = e;
+            if (_onHitLaunched)
+                return;
             DetermineStrategy();
             Stop();
             DoFire();
@@ -109,7 +111,10 @@ namespace Robot24
                     angle -= 360;
                 if (angle < -180)
                     angle += 360;
-                TurnRight(angle+90);
+                if (evnt.Bearing > 0)
+                    TurnRight(evnt.Bearing - 90);
+                else
+                    TurnRight(evnt.Bearing + 90);
                 SynchronizeGunWithHeading();
                 var direction = CalculateEvadeDirectionFromHeading();
                 TurnGunLeft(90);
