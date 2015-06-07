@@ -20,6 +20,7 @@ namespace Robot24
             InitializeConfiguration();
             MaxMovingDistance = Math.Max(BattleFieldWidth, BattleFieldHeight);
             TurnRight(90);
+            Random r= new Random();
             while (true)
             {
                 if (CurrentStrategy != null && CurrentStrategy.MoveType == MoveType.Circle)
@@ -31,10 +32,24 @@ namespace Robot24
                     }
                 }
                 
-                Ahead(MaxMovingDistance);
-                TurnRight(90);
+                /*Ahead(MaxMovingDistance);
+                TurnRight(90);*/
+                RandomizeMovement(r.Next(2),r.Next(2),r.Next(360),r.Next((int)BattleFieldHeight));
                 DetermineStrategy();
             }
+        }
+
+        private void RandomizeMovement(int direction, int turnDirection, int angle, int distance)
+        {
+            if(turnDirection == 0)
+                TurnLeft(angle);
+            else
+                TurnRight(angle);
+
+            if (direction == 0)
+                Ahead(distance);
+            else
+                Back(distance);
         }
 
         private void InitializeConfiguration()

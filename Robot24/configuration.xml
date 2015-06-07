@@ -4,7 +4,7 @@
       <Requirements>
         <NumberOfPlayers>
           <Min>1</Min>
-          <Max>4</Max>
+          <Max>10</Max>
         </NumberOfPlayers>
         <EnemyEnergy>
           <Min>0</Min>
@@ -28,7 +28,7 @@
         </EnemyDirectionRelativeToRobot>
       </Requirements>
       <MoveType>Straight</MoveType>
-      <FireType>LightFire</FireType>
+      <FireType>SmartFire</FireType>
     </Strategy>
   </Strategies>
 </Configuration>
