@@ -117,6 +117,7 @@ namespace Robot24
                     Fire(1);
                     break;
             }
+            Scan();
         }
 
         private void DoOpeningMove()
@@ -141,7 +142,7 @@ namespace Robot24
         {
             TurnRight(GetTurnAngle());
             SynchronizeGunWithHeading();
-            Ahead(LastRobotInfo.Distance / 10);
+            Ahead(Math.Max(LastRobotInfo.Distance / 10, 10));
         }
 
         private void DoEvadeOpeningMove()
