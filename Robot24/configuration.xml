@@ -27,7 +27,7 @@
           <Max>180</Max>
         </EnemyDirectionRelativeToRobot>
       </Requirements>
-      <MoveType>Straight</MoveType>
+      <MoveType>Evade</MoveType>
       <FireType>SmartFire</FireType>
     </Strategy>
   </Strategies>

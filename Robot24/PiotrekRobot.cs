@@ -148,7 +148,9 @@ namespace Robot24
         private void DoEvadeOpeningMove()
         {
             TurnRight(LastRobotInfo.Bearing + 90);
-            Ahead(LastRobotInfo.Distance);
+            SynchronizeGunWithHeading();
+            TurnGunLeft(90);
+            Ahead(LastRobotInfo.Distance /5);
         }
         
         private void DoCircleOpeningMove()
