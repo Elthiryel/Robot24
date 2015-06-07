@@ -80,8 +80,10 @@ namespace Robot24
 
         public override void OnHitWall(HitWallEvent evnt)
         {
+            return;
             _moveDirection *=-1;
-            TurnRight(evnt.Bearing);
+            TurnRight(Heading - GunHeading + evnt.Bearing);
+            SynchronizeGunWithHeading();
             if (Math.Abs(GunHeading - Heading) < 10)
                 TurnGunRight(90);
         }
@@ -122,9 +124,9 @@ namespace Robot24
 
         private void DoStraightOpeningMove()
         {
-            TurnRight(LastRobotInfo.Bearing);
+            TurnRight(GetTurnAngle());
             SynchronizeGunWithHeading();
-            Ahead(LastRobotInfo.Distance / 10);
+            Ahead(LastRobotInfo.Distance / (Math.Min((LastRobotInfo.Velocity+0.01)*10,1)));
         }
 
         private void DoEvadeOpeningMove()
@@ -137,7 +139,8 @@ namespace Robot24
         {
             if (LastRobotInfo.Velocity == 0)
                 _moveDirection *= -1;
-            TurnRight(LastRobotInfo.Bearing + 90);
+            TurnRight(GetTurnAngle() + 90);
+            SynchronizeGunWithHeading();
             TurnGunLeft(90);
             Ahead(10 * _moveDirection);
         }
@@ -161,8 +164,14 @@ namespace Robot24
         }
 
         private void DoStraightEndingMove()
-        {
-            
+        {     
+            for (int i = 0; i < 10; i++)
+            {
+                TurnRight(5*i);
+                TurnLeft(10*i);
+                TurnRight(5*i);
+            }
+                
         }
 
         private void DoEvadeEndingMove()
@@ -250,8 +259,8 @@ namespace Robot24
 
         private double GetTurnAngle()
         {
-            var angle = LastRobotInfo.Bearing - (GunHeading - Heading);
-            return 0; // TODO
+            var angle = Heading - GunHeading + LastRobotInfo.Bearing;
+            return angle; // TODO
         }
     }
 }
