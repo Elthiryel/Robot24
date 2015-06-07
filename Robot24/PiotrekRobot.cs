@@ -193,7 +193,11 @@ namespace Robot24
             TurnRight(LastRobotInfo.Bearing + 90);
             SynchronizeGunWithHeading();
             TurnGunLeft(90);
-            Ahead(LastRobotInfo.Distance /5);
+            
+            if (CalculateEvadeDirectionFromHeading())
+                Ahead(LastRobotInfo.Distance /5);
+            else
+                Back(LastRobotInfo.Distance / 5);
         }
         
         private void DoCircleOpeningMove()
