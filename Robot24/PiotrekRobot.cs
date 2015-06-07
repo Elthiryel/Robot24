@@ -1,28 +1,24 @@
 ﻿using System;
 using System.IO;
-using System.Security.Permissions;
 using System.Xml.Serialization;
 using Robocode;
 using Robot24.Config;
 
 namespace Robot24
 {
-    //[FileIOPermission(SecurityAction.Assert, Unrestricted = true)]
     public class PiotrekRobot : Robot
     {
-        private bool _lastRight;
-        private int moveDirection = 1;
+        private int _moveDirection = 1;
+
         public Configuration CentralConfiguration;
         public Strategy CurrentStrategy;
         public ScannedRobotEvent LastRobotInfo;
-        public double Movin = 50;
+        public double MaxMovingDistance = 50;
 
         public override void Run()
         {
             InitializeConfiguration();
-            _lastRight = true;
-            Movin = Math.Max(BattleFieldWidth, BattleFieldHeight);
-            //TurnGunRight(90);
+            MaxMovingDistance = Math.Max(BattleFieldWidth, BattleFieldHeight);
             TurnRight(90);
             while (true)
             {
@@ -30,15 +26,34 @@ namespace Robot24
                 {
                     while (true)
                     {
-                        Ahead(30*moveDirection);
+                        Ahead(30*_moveDirection);
                         TurnRight(20);
                     }
                 }
                 
-                Ahead(Movin);
-                //this.Heading
+                Ahead(MaxMovingDistance);
                 TurnRight(90);
                 DetermineStrategy();
+            }
+        }
+
+        private void InitializeConfiguration()
+        {
+            GetResourceTextFile("configuration.xml");
+        }
+
+        private void GetResourceTextFile(string filename)
+        {
+            var serializer = new XmlSerializer(typeof(Configuration));
+
+            using (var stream = GetType().Assembly.GetManifestResourceStream("Robot24." + filename))
+            {
+                if (stream == null)
+                    return;
+                using (var sr = new StreamReader(stream))
+                {
+                    CentralConfiguration = (Configuration) serializer.Deserialize(sr);
+                }
             }
         }
 
@@ -52,34 +67,10 @@ namespace Robot24
             }
         }
 
-        public void InitializeConfiguration()
-        {
-            GetResourceTextFile("configuration.xml");
-        }
-
-        public void GetResourceTextFile(string filename)
-        {
-            var serializer = new XmlSerializer(typeof(Configuration));
-
-            using (Stream stream = this.GetType().Assembly.
-                       GetManifestResourceStream("Robot24." + filename))
-            {
-                using (StreamReader sr = new StreamReader(stream))
-                {
-                    CentralConfiguration = (Configuration)serializer.Deserialize(sr);
-                }
-            }
-        }
-
         public override void OnScannedRobot(ScannedRobotEvent e)
         {
             LastRobotInfo = e;
             DetermineStrategy();
-            var bearing = e.Bearing;
-            _lastRight = bearing >= 0;
-            var distance = e.Distance;
-            var velocity = e.Velocity;
-            Console.WriteLine("SCANNED, bearing = {0}, distance = {1}, velocity = {2}", bearing, distance, velocity);
             Stop();
             DoFire();
             DoOpeningMove();
@@ -89,41 +80,25 @@ namespace Robot24
 
         public override void OnHitWall(HitWallEvent evnt)
         {
-            moveDirection *=-1;
-            this.TurnRight(evnt.Bearing);
-            if (Math.Abs(this.GunHeading - this.Heading) < 10)
-                this.TurnGunRight(90);
+            _moveDirection *=-1;
+            TurnRight(evnt.Bearing);
+            if (Math.Abs(GunHeading - Heading) < 10)
+                TurnGunRight(90);
         }
 
         public override void OnHitRobot(HitRobotEvent e)
         {
-            this.TurnRight(e.Bearing);
             if (CurrentStrategy == null)
                 return;
             switch (CurrentStrategy.MoveType)
             {
                 case MoveType.Straight:
+                    TurnRight(e.Bearing);
                     Fire(5);
                     break;
                 default:
                     Fire(1);
                     break;
-            }
-        }
-
-
-        private void DoEndingMove()
-        {
-            if (CurrentStrategy == null)
-                return;
-            switch (CurrentStrategy.MoveType)
-            {
-                case MoveType.Straight:
-                    TurnRight(LastRobotInfo.Bearing);
-                    Ahead(LastRobotInfo.Distance / 2);
-                    break;
-                default:
-                    return;
             }
         }
 
@@ -134,25 +109,70 @@ namespace Robot24
             switch (CurrentStrategy.MoveType)
             {
                 case MoveType.Straight:
-                    TurnRight(LastRobotInfo.Bearing);
-                    SynchronizeGunWithHeading();
-                    Ahead(LastRobotInfo.Distance/2);
+                    DoStraightOpeningMove();
                     break;
                 case MoveType.Evade:
-                    TurnRight(LastRobotInfo.Bearing + 90);
-                    Ahead(LastRobotInfo.Distance);
+                    DoEvadeOpeningMove();
                     break;
                 case MoveType.Circle:
-                    if (LastRobotInfo.Velocity == 0)
-                        moveDirection *= -1;
-                    TurnRight(LastRobotInfo.Bearing + 90);
-                    SynchronizeGunWithHeading();
-                    TurnGunLeft(90);
-	                Ahead(10 * moveDirection);
+                    DoCircleOpeningMove();
                     break;
-                default:
-                    return;
             }
+        }
+
+        private void DoStraightOpeningMove()
+        {
+            TurnRight(LastRobotInfo.Bearing);
+            SynchronizeGunWithHeading();
+            Ahead(LastRobotInfo.Distance / 10);
+        }
+
+        private void DoEvadeOpeningMove()
+        {
+            TurnRight(LastRobotInfo.Bearing + 90);
+            Ahead(LastRobotInfo.Distance);
+        }
+        
+        private void DoCircleOpeningMove()
+        {
+            if (LastRobotInfo.Velocity == 0)
+                _moveDirection *= -1;
+            TurnRight(LastRobotInfo.Bearing + 90);
+            TurnGunLeft(90);
+            Ahead(10 * _moveDirection);
+        }
+
+        private void DoEndingMove()
+        {
+            if (CurrentStrategy == null)
+                return;
+            switch (CurrentStrategy.MoveType)
+            {
+                case MoveType.Straight:
+                    DoStraightEndingMove();
+                    break;
+                case MoveType.Evade:
+                    DoEvadeEndingMove();
+                    break;
+                case MoveType.Circle:
+                    DoCircleEndingMove();
+                    break;
+            }
+        }
+
+        private void DoStraightEndingMove()
+        {
+            
+        }
+
+        private void DoEvadeEndingMove()
+        {
+            
+        }
+
+        private void DoCircleEndingMove()
+        {
+            
         }
 
         private void DoFire()
@@ -226,6 +246,12 @@ namespace Robot24
             if (diff < -180)
                 diff += 360;
             TurnGunRight(diff);
+        }
+
+        private double GetTurnAngle()
+        {
+            var angle = LastRobotInfo.Bearing - (GunHeading - Heading);
+            return 0; // TODO
         }
     }
 }
