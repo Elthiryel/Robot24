@@ -13,7 +13,9 @@ namespace Robot24
         public Configuration CentralConfiguration;
         public Strategy CurrentStrategy;
         public ScannedRobotEvent LastRobotInfo;
+        public double evadingMove = 30;
         public double MaxMovingDistance = 50;
+        private bool _onHitLaunched = false;
 
         public override void Run()
         {
@@ -91,6 +93,47 @@ namespace Robot24
             DoOpeningMove();
             Scan();
             DoEndingMove();
+        }
+
+        public override void OnHitByBullet(HitByBulletEvent evnt)
+        {
+            if (_onHitLaunched)
+                return;
+
+            _onHitLaunched = true;
+            
+            if (CurrentStrategy != null && CurrentStrategy.MoveType == MoveType.Evade)
+            {
+                var angle = Heading - GunHeading + evnt.Bearing;
+                if (angle > 180)
+                    angle -= 360;
+                if (angle < -180)
+                    angle += 360;
+                TurnRight(angle+90);
+                SynchronizeGunWithHeading();
+                var direction = CalculateEvadeDirectionFromHeading();
+                TurnGunLeft(90);
+                if (direction)
+                    Ahead(evadingMove);
+                else
+                    Back(evadingMove);
+            }
+            _onHitLaunched = false;
+        }
+
+        private bool CalculateEvadeDirectionFromHeading()
+        {
+            bool isYDriven = Math.Cos(this.Heading) > 0;
+            //false - back, true - ahead
+            if (isYDriven)
+                if (this.Y > this.BattleFieldHeight/2)
+                    return false;
+                else
+                    return true;
+            else if (this.X > this.BattleFieldWidth/2)
+                return false;
+            else
+                return true;
         }
 
         public override void OnHitWall(HitWallEvent evnt)
