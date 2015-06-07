@@ -135,6 +135,7 @@ namespace Robot24
             {
                 case MoveType.Straight:
                     TurnRight(LastRobotInfo.Bearing);
+                    SynchronizeGunWithHeading();
                     Ahead(LastRobotInfo.Distance/2);
                     break;
                 case MoveType.Evade:
@@ -145,6 +146,7 @@ namespace Robot24
                     if (LastRobotInfo.Velocity == 0)
                         moveDirection *= -1;
                     TurnRight(LastRobotInfo.Bearing + 90);
+                    SynchronizeGunWithHeading();
                     TurnGunLeft(90);
 	                Ahead(10 * moveDirection);
                     break;
