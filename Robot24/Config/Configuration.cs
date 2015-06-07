@@ -47,6 +47,8 @@ namespace Robot24.Config
                 return false;
             if (Requirements.EnemyDirectionRelativeToGun != null && !(enemyDirectionRelativeToGun >= Requirements.EnemyDirectionRelativeToGun.Min && enemyDirectionRelativeToGun <= Requirements.EnemyDirectionRelativeToGun.Max))
                 return false;
+            if (Requirements.EnemyDistance != null && !(lastRobotInfo.Distance >= Requirements.EnemyDistance.Min && lastRobotInfo.Distance <= Requirements.EnemyDistance.Max))
+                return false;
             return true;
         }
     }
@@ -60,6 +62,7 @@ namespace Robot24.Config
         public Parameter EnemyVelocity { get; set; }
         public Parameter EnemyDirectionRelativeToGun { get; set; }
         public Parameter EnemyDirectionRelativeToRobot { get; set; }
+        public Parameter EnemyDistance { get; set; }
     }
 
 }

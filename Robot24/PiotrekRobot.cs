@@ -36,7 +36,7 @@ namespace Robot24
                 
                 /*Ahead(MaxMovingDistance);
                 TurnRight(90);*/
-                RandomizeMovement(r.Next(2),r.Next(2),r.Next(360),r.Next((int)BattleFieldHeight));
+                RandomizeMovement(r.Next(2),r.Next(2),r.Next(180)-90,r.Next((int)BattleFieldHeight/2));
                 DetermineStrategy();
             }
         }
@@ -47,6 +47,8 @@ namespace Robot24
                 TurnLeft(angle);
             else
                 TurnRight(angle);
+
+            Scan();
 
             if (direction == 0)
                 Ahead(distance);
@@ -80,7 +82,10 @@ namespace Robot24
             foreach (var strategy in CentralConfiguration.Strategies)
             {
                 if (strategy.PassedRequirements(LastRobotInfo, this))
+                {
                     CurrentStrategy = strategy;
+                    break;
+                }              
             }
         }
 
@@ -106,11 +111,6 @@ namespace Robot24
             
             if (CurrentStrategy != null && CurrentStrategy.MoveType == MoveType.Evade)
             {
-                var angle = Heading - GunHeading + evnt.Bearing;
-                if (angle > 180)
-                    angle -= 360;
-                if (angle < -180)
-                    angle += 360;
                 if (evnt.Bearing > 0)
                     TurnRight(evnt.Bearing - 90);
                 else
@@ -118,6 +118,7 @@ namespace Robot24
                 SynchronizeGunWithHeading();
                 var direction = CalculateEvadeDirectionFromHeading();
                 TurnGunLeft(90);
+                DoFire();
                 if (direction)
                     Ahead(evadingMove);
                 else
@@ -126,19 +127,27 @@ namespace Robot24
             _onHitLaunched = false;
         }
 
+        //false - back, true - ahead
         private bool CalculateEvadeDirectionFromHeading()
         {
-            bool isYDriven = Math.Cos(this.Heading) > 0;
-            //false - back, true - ahead
+            bool isYDriven = Math.Abs(Heading%180) < 45 || Math.Abs(Heading%180) > 135;
+            
+            //check border conditions
+            if (isYDriven && this.X < 20 || this.X > this.BattleFieldWidth - 20)
+                isYDriven = false;
+
+            if (!isYDriven && this.Y < 10 || this.Y > this.BattleFieldHeight - 20)
+                isYDriven = true;
+
             if (isYDriven)
                 if (this.Y > this.BattleFieldHeight/2)
-                    return false;
+                    return (Heading > 90 && Heading < 270);
                 else
-                    return true;
+                    return Heading < 90 || Heading > 270;
             else if (this.X > this.BattleFieldWidth/2)
-                return false;
+                return (this.Heading > 180);
             else
-                return true;
+                return (this.Heading < 180);
         }
 
         public override void OnHitWall(HitWallEvent evnt)

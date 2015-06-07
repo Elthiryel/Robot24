@@ -1,5 +1,15 @@
 <Configuration>
   <Strategies>
+    <Strategy>
+      <Requirements>
+        <EnemyDistance>
+          <Min>0</Min>
+          <Max>100</Max>
+        </EnemyDistance>
+      </Requirements>
+      <MoveType>Straight</MoveType>
+      <FireType>HeavyFire</FireType>
+    </Strategy>
     <Strategy name="strategy1">
       <Requirements>
         <NumberOfPlayers>
@@ -28,6 +38,36 @@
         </EnemyDirectionRelativeToRobot>
       </Requirements>
       <MoveType>Evade</MoveType>
+      <FireType>SmartFire</FireType>
+    </Strategy>
+    <Strategy name="strategy2">
+      <Requirements>
+        <NumberOfPlayers>
+          <Min>1</Min>
+          <Max>10</Max>
+        </NumberOfPlayers>
+        <EnemyEnergy>
+          <Min>0</Min>
+          <Max>30</Max>
+        </EnemyEnergy>
+        <Energy>
+          <Min>40</Min>
+          <Max>300</Max>
+        </Energy>
+        <EnemyVelocity>
+          <Min>-100</Min>
+          <Max>100</Max>
+        </EnemyVelocity>
+        <EnemyDirectionRelativeToGun>
+          <Min>-180</Min>
+          <Max>180</Max>
+        </EnemyDirectionRelativeToGun>
+        <EnemyDirectionRelativeToRobot>
+          <Min>-180</Min>
+          <Max>180</Max>
+        </EnemyDirectionRelativeToRobot>
+      </Requirements>
+      <MoveType>Straight</MoveType>
       <FireType>SmartFire</FireType>
     </Strategy>
   </Strategies>
