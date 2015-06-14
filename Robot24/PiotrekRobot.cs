@@ -6,7 +6,7 @@ using Robot24.Config;
 
 namespace Robot24
 {
-    public class PiotrekRobot : Robot
+    public class PiotrekRobot : AdvancedRobot
     {
         private int _moveDirection = 1;
 
@@ -29,9 +29,9 @@ namespace Robot24
                 {
                     while (true)
                     {
-                        Ahead(30*_moveDirection);
-                        DetermineStrategy();
-                        TurnRight(20);
+                        this.MaxVelocity = 5;
+                        SetTurnRight(5000);
+                        Ahead(10000*_moveDirection);
                     }
                 }
 
@@ -127,6 +127,9 @@ namespace Robot24
 
         public override void OnScannedRobot(ScannedRobotEvent e)
         {
+            if (CurrentStrategy == null || CurrentStrategy.MoveType == MoveType.Circle)
+                DetermineStrategy();
+
             LastRobotInfo = e;
             if (_onHitLaunched)
                 return;
@@ -140,6 +143,9 @@ namespace Robot24
 
         public override void OnHitByBullet(HitByBulletEvent evnt)
         {
+            if (CurrentStrategy == null || CurrentStrategy.MoveType == MoveType.Circle)
+                DetermineStrategy();
+
             if (_onHitLaunched)
                 return;
 
@@ -196,8 +202,12 @@ namespace Robot24
 
         public override void OnHitRobot(HitRobotEvent e)
         {
+            if (CurrentStrategy == null || CurrentStrategy.MoveType == MoveType.Circle)
+                DetermineStrategy();
+
             if (CurrentStrategy == null)
                 return;
+
             switch (CurrentStrategy.MoveType)
             {
                 case MoveType.Straight:
@@ -249,12 +259,12 @@ namespace Robot24
         
         private void DoCircleOpeningMove()
         {
-            if (LastRobotInfo.Velocity == 0)
+            /*if (LastRobotInfo.Velocity == 0)
                 _moveDirection *= -1;
             TurnRight(GetTurnAngle() + 90);
             SynchronizeGunWithHeading();
             TurnGunLeft(90);
-            Ahead(10 * _moveDirection);
+            Ahead(10 * _moveDirection);*/
         }
 
         private void DoEndingMove()

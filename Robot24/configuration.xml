@@ -2,6 +2,16 @@
   <Strategies>
     <Strategy>
       <Requirements>
+        <EnemyVelocity>
+          <Min>0</Min>
+          <Max>1</Max>
+        </EnemyVelocity>
+      </Requirements>
+      <MoveType>Evade</MoveType>
+      <FireType>HeavyFire</FireType>
+    </Strategy>
+    <Strategy>
+      <Requirements>
         <EnemyDistance>
           <Min>0</Min>
           <Max>100</Max>
@@ -37,7 +47,7 @@
           <Max>180</Max>
         </EnemyDirectionRelativeToRobot>
       </Requirements>
-      <MoveType>Evade</MoveType>
+      <MoveType>Circle</MoveType>
       <FireType>SmartFire</FireType>
     </Strategy>
     <Strategy name="strategy2">
