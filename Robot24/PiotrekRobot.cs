@@ -262,8 +262,7 @@ namespace Robot24
             /*if (LastRobotInfo.Velocity == 0)
                 _moveDirection *= -1;
             TurnRight(GetTurnAngle() + 90);
-            SynchronizeGunWithHeading();
-            TurnGunLeft(90);
+            SynchronizeGunWithHeading(-90);
             Ahead(10 * _moveDirection);*/
         }
 
