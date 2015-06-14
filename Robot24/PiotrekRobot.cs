@@ -15,7 +15,7 @@ namespace Robot24
         public ScannedRobotEvent LastRobotInfo;
         public double evadingMove = 30;
         public double MaxMovingDistance = 50;
-        private bool _onHitLaunched = false;
+        private bool _onHitLaunched;
 
         public override void Run()
         {
@@ -111,14 +111,9 @@ namespace Robot24
             
             if (CurrentStrategy != null && CurrentStrategy.MoveType == MoveType.Evade)
             {
-                if (evnt.Bearing > 0)
-                    TurnRight(evnt.Bearing - 90);
-                else
-                    TurnRight(evnt.Bearing + 90);
-                SynchronizeGunWithHeading();
+                TurnRight(evnt.Bearing + 90);
+                SynchronizeGunWithHeading(-90);
                 var direction = CalculateEvadeDirectionFromHeading();
-                TurnGunLeft(90);
-                DoFire();
                 if (direction)
                     Ahead(evadingMove);
                 else
@@ -205,8 +200,7 @@ namespace Robot24
         private void DoEvadeOpeningMove()
         {
             TurnRight(LastRobotInfo.Bearing + 90);
-            SynchronizeGunWithHeading();
-            TurnGunLeft(90);
+            SynchronizeGunWithHeading(-90);
             
             if (CalculateEvadeDirectionFromHeading())
                 Ahead(LastRobotInfo.Distance /5);
@@ -317,7 +311,15 @@ namespace Robot24
                 case FireType.SmartFire:
                     SmartFire();
                     break;
+                case FireType.Ultimate:
+                    UltimateFire();
+                    break;
             }
+        }
+
+        private void UltimateFire()
+        {
+            Fire(5);
         }
 
         private void HeavyFire()
@@ -363,9 +365,9 @@ namespace Robot24
             return false;
         }
 
-        private void SynchronizeGunWithHeading()
+        private void SynchronizeGunWithHeading(double offset = 0)
         {
-            var diff = Heading - GunHeading;
+            var diff = Heading - GunHeading + offset;
             if (diff > 180)
                 diff -= 360;
             if (diff < -180)

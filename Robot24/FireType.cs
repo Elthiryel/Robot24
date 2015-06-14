@@ -11,6 +11,7 @@ namespace Robot24
         NoFire = 0,
         SmartFire = 1,
         LightFire = 2,
-        HeavyFire = 3
+        HeavyFire = 3,
+        Ultimate = 4
     }
 }
