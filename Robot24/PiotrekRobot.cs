@@ -37,26 +37,17 @@ namespace Robot24
 
                 if (CurrentStrategy != null && CurrentStrategy.MoveType == MoveType.Evade)
                 {
-                    double aheadDistance = 50;
-                    var angle = GetClosestDirection(out aheadDistance);
-                    TurnRight(angle - this.Heading);
-                    Ahead(aheadDistance);
-                    while (true)
-                    {
-                        TurnRight(90);
-                        SynchronizeGunWithHeading(90);
-                        if ((int)this.Heading%180 == 0)
-                            Ahead(BattleFieldHeight);
-                        else
-                            Ahead(BattleFieldWidth);
-                        DetermineStrategy();
-                    }
-                    
+                    RandomizeMovement(r.Next(2), r.Next(2), r.Next(180) - 90, 200 + r.Next((int)BattleFieldHeight / 2));                  
+                }
+
+                if (CurrentStrategy == null || CurrentStrategy != null && CurrentStrategy.MoveType == MoveType.Straight)
+                {
+                    RandomizeMovement(r.Next(2), r.Next(2), r.Next(180) - 90, r.Next((int)BattleFieldHeight / 2));
                 }
                 
                 /*Ahead(MaxMovingDistance);
                 TurnRight(90);*/
-                RandomizeMovement(r.Next(2),r.Next(2),r.Next(180)-90,r.Next((int)BattleFieldHeight/2));
+                //RandomizeMovement(r.Next(2),r.Next(2),r.Next(180)-90,r.Next((int)BattleFieldHeight/2));
                 DetermineStrategy();
             }
         }
