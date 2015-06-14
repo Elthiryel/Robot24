@@ -30,8 +30,28 @@ namespace Robot24
                     while (true)
                     {
                         Ahead(30*_moveDirection);
+                        DetermineStrategy();
                         TurnRight(20);
                     }
+                }
+
+                if (CurrentStrategy != null && CurrentStrategy.MoveType == MoveType.Evade)
+                {
+                    double aheadDistance = 50;
+                    var angle = GetClosestDirection(out aheadDistance);
+                    TurnRight(angle - this.Heading);
+                    Ahead(aheadDistance);
+                    while (true)
+                    {
+                        TurnRight(90);
+                        SynchronizeGunWithHeading(90);
+                        if ((int)this.Heading%180 == 0)
+                            Ahead(BattleFieldHeight);
+                        else
+                            Ahead(BattleFieldWidth);
+                        DetermineStrategy();
+                    }
+                    
                 }
                 
                 /*Ahead(MaxMovingDistance);
@@ -39,6 +59,34 @@ namespace Robot24
                 RandomizeMovement(r.Next(2),r.Next(2),r.Next(180)-90,r.Next((int)BattleFieldHeight/2));
                 DetermineStrategy();
             }
+        }
+
+        private int GetClosestDirection(out double minDif)
+        {
+            var direction = -1;
+            minDif = Math.Max(BattleFieldHeight, BattleFieldWidth);
+            if (this.X < minDif)
+            {
+                minDif = this.X;
+                direction = 270;
+            }
+            if (this.Y < minDif)
+            {
+                minDif = this.Y;
+                direction = 180;
+            }
+            if (BattleFieldWidth - this.X < minDif)
+            {
+                minDif = BattleFieldWidth - this.X;
+                direction = 90;
+            }
+            if (BattleFieldHeight - this.Y < minDif)
+            {
+                minDif = BattleFieldHeight - this.Y;
+                direction = 0;
+            }
+
+            return direction;
         }
 
         private void RandomizeMovement(int direction, int turnDirection, int angle, int distance)
