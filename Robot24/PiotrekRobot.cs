@@ -150,7 +150,10 @@ namespace Robot24
             
             if (CurrentStrategy != null && CurrentStrategy.MoveType == MoveType.Evade)
             {
-                TurnRight(evnt.Bearing + 90);
+                var angle = evnt.Bearing + 90;
+                if (angle > 180)
+                    angle -= 360;
+                TurnRight(angle);
                 SynchronizeGunWithHeading(-90);
                 var direction = CalculateEvadeDirectionFromHeading();
                 if (direction)
