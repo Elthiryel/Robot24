@@ -45,9 +45,6 @@ namespace Robot24
                     RandomizeMovement(r.Next(2), r.Next(2), r.Next(180) - 90, r.Next((int)BattleFieldHeight / 2));
                 }
                 
-                /*Ahead(MaxMovingDistance);
-                TurnRight(90);*/
-                //RandomizeMovement(r.Next(2),r.Next(2),r.Next(180)-90,r.Next((int)BattleFieldHeight/2));
                 DetermineStrategy();
             }
         }
