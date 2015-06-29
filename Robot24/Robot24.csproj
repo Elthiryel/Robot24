@@ -47,7 +47,6 @@
     <Compile Include="Config\Configuration.cs" />
     <Compile Include="Config\Parameter.cs" />
     <Compile Include="FireType.cs" />
-    <Compile Include="MarcinRobot.cs" />
     <Compile Include="MoveType.cs" />
     <Compile Include="PiotrekRobot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
