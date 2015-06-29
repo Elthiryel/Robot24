@@ -8,12 +8,10 @@ namespace Robot24
 {
     public class PiotrekRobot : AdvancedRobot
     {
-        private int _moveDirection = 1;
-
         public Configuration CentralConfiguration;
         public Strategy CurrentStrategy;
         public ScannedRobotEvent LastRobotInfo;
-        public double evadingMove = 30;
+        public double EvadingMove = 30;
         public double MaxMovingDistance = 50;
         private bool _onHitLaunched;
 
@@ -22,16 +20,16 @@ namespace Robot24
             InitializeConfiguration();
             MaxMovingDistance = Math.Max(BattleFieldWidth, BattleFieldHeight);
             TurnRight(90);
-            Random r= new Random();
+            var r = new Random();
             while (true)
             {
                 if (CurrentStrategy != null && CurrentStrategy.MoveType == MoveType.Circle)
                 {
                     while (true)
                     {
-                        this.MaxVelocity = 5;
+                        MaxVelocity = 5;
                         SetTurnRight(5000);
-                        Ahead(10000*_moveDirection);
+                        Ahead(10000);
                     }
                 }
 
@@ -47,34 +45,6 @@ namespace Robot24
                 
                 DetermineStrategy();
             }
-        }
-
-        private int GetClosestDirection(out double minDif)
-        {
-            var direction = -1;
-            minDif = Math.Max(BattleFieldHeight, BattleFieldWidth);
-            if (this.X < minDif)
-            {
-                minDif = this.X;
-                direction = 270;
-            }
-            if (this.Y < minDif)
-            {
-                minDif = this.Y;
-                direction = 180;
-            }
-            if (BattleFieldWidth - this.X < minDif)
-            {
-                minDif = BattleFieldWidth - this.X;
-                direction = 90;
-            }
-            if (BattleFieldHeight - this.Y < minDif)
-            {
-                minDif = BattleFieldHeight - this.Y;
-                direction = 0;
-            }
-
-            return direction;
         }
 
         private void RandomizeMovement(int direction, int turnDirection, int angle, int distance)
@@ -160,9 +130,9 @@ namespace Robot24
                 SynchronizeGunWithHeading(-90);
                 var direction = CalculateEvadeDirectionFromHeading();
                 if (direction)
-                    Ahead(evadingMove);
+                    Ahead(EvadingMove);
                 else
-                    Back(evadingMove);
+                    Back(EvadingMove);
             }
             _onHitLaunched = false;
         }
@@ -173,31 +143,20 @@ namespace Robot24
             bool isYDriven = Math.Abs(Heading%180) < 45 || Math.Abs(Heading%180) > 135;
             
             //check border conditions
-            if (isYDriven && this.X < 20 || this.X > this.BattleFieldWidth - 20)
+            if (isYDriven && X < 20 || X > BattleFieldWidth - 20)
                 isYDriven = false;
 
-            if (!isYDriven && this.Y < 10 || this.Y > this.BattleFieldHeight - 20)
+            if (!isYDriven && Y < 10 || Y > BattleFieldHeight - 20)
                 isYDriven = true;
 
             if (isYDriven)
-                if (this.Y > this.BattleFieldHeight/2)
+                if (Y > BattleFieldHeight/2)
                     return (Heading > 90 && Heading < 270);
                 else
                     return Heading < 90 || Heading > 270;
-            else if (this.X > this.BattleFieldWidth/2)
-                return (this.Heading > 180);
-            else
-                return (this.Heading < 180);
-        }
-
-        public override void OnHitWall(HitWallEvent evnt)
-        {
-            return;
-            _moveDirection *=-1;
-            TurnRight(Heading - GunHeading + evnt.Bearing);
-            SynchronizeGunWithHeading();
-            if (Math.Abs(GunHeading - Heading) < 10)
-                TurnGunRight(90);
+            if (X > BattleFieldWidth/2)
+                return (Heading > 180);
+            return (Heading < 180);
         }
 
         public override void OnHitRobot(HitRobotEvent e)
@@ -259,11 +218,6 @@ namespace Robot24
         
         private void DoCircleOpeningMove()
         {
-            /*if (LastRobotInfo.Velocity == 0)
-                _moveDirection *= -1;
-            TurnRight(GetTurnAngle() + 90);
-            SynchronizeGunWithHeading(-90);
-            Ahead(10 * _moveDirection);*/
         }
 
         private void DoEndingMove()
@@ -334,12 +288,10 @@ namespace Robot24
 
         private void DoEvadeEndingMove()
         {
-            
         }
 
         private void DoCircleEndingMove()
         {
-            
         }
 
         private void DoFire()
